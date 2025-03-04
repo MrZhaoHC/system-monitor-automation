@@ -1,9 +1,11 @@
-from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLineEdit
 from PySide6.QtCore import QThread, Signal
 from datetime import datetime
 from .ui_main_window import Ui_MainWindow
 from modules.system_monitor import SystemMonitor
 from modules.file_manager import FileManager
+from modules.notification_manager import NotificationManager
+from modules.config_manager import ConfigManager
 
 class FileManagerThread(QThread):
     # 定义信号
@@ -87,11 +89,24 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
+        # 初始化配置管理器
+        self.config_manager = ConfigManager()
+        
         # 初始化系统监控器
         self.system_monitor = SystemMonitor()
+        self.system_monitor.thresholds = self.config_manager.get_system_monitor_config()
         
         # 初始化文件管理器
         self.file_manager = FileManager()
+        for directory in self.config_manager.get_temp_directories():
+            self.file_manager.add_temp_directory(directory)
+        
+        # 初始化通知管理器
+        self.notification_manager = NotificationManager()
+        notification_config = self.config_manager.get_notification_config()
+        self.notification_manager.configure_smtp(notification_config)
+        for recipient in notification_config['recipients']:
+            self.notification_manager.add_recipient(recipient)
         
         # 初始化UI组件
         self._init_ui()
@@ -115,13 +130,26 @@ class MainWindow(QMainWindow):
 
         # 设置初始文件管理UI
         self.ui.cleanFilesButton.setEnabled(False)
+        for directory in self.file_manager.temp_directories:
+            self.ui.tempDirListWidget.addItem(directory)
+            
+        # 设置初始通知设置UI
+        notification_config = self.config_manager.get_notification_config()
+        self.ui.smtpServerLineEdit.setText(notification_config['smtp_server'])
+        self.ui.smtpPortSpinBox.setValue(notification_config['smtp_port'])
+        self.ui.smtpUsernameLineEdit.setText(notification_config['smtp_username'])
+        self.ui.smtpPasswordLineEdit.setText(notification_config['smtp_password'])
+        self.ui.useTlsCheckBox.setChecked(notification_config['use_tls'])
+        self.ui.alertIntervalSpinBox.setValue(notification_config.get('alert_interval', 10))
+        for recipient in notification_config['recipients']:
+            self.ui.recipientsListWidget.addItem(recipient)
         
         # 连接阈值变化信号
         self.ui.cpuThresholdSpinBox.valueChanged.connect(
-            lambda value: self.system_monitor.set_threshold('cpu_percent', float(value))
+            lambda value: self._update_cpu_threshold(value)
         )
         self.ui.memoryThresholdSpinBox.valueChanged.connect(
-            lambda value: self.system_monitor.set_threshold('memory_percent', float(value))
+            lambda value: self._update_memory_threshold(value)
         )
         
         # 连接文件管理器相关信号
@@ -132,6 +160,16 @@ class MainWindow(QMainWindow):
         )
         self.ui.scanFilesButton.clicked.connect(self._scan_temp_files)
         self.ui.cleanFilesButton.clicked.connect(self._clean_old_files)
+        
+        # 连接通知管理器相关信号
+        self.ui.smtpServerLineEdit.textChanged.connect(self._update_smtp_settings)
+        self.ui.smtpPortSpinBox.valueChanged.connect(self._update_smtp_settings)
+        self.ui.smtpUsernameLineEdit.textChanged.connect(self._update_smtp_settings)
+        self.ui.smtpPasswordLineEdit.textChanged.connect(self._update_smtp_settings)
+        self.ui.useTlsCheckBox.stateChanged.connect(self._update_smtp_settings)
+        self.ui.alertIntervalSpinBox.valueChanged.connect(self._update_smtp_settings)
+        self.ui.addRecipientButton.clicked.connect(self._add_recipient)
+        self.ui.removeRecipientButton.clicked.connect(self._remove_recipient)
     
     def _add_temp_directory(self):
         """添加临时目录"""
@@ -139,6 +177,7 @@ class MainWindow(QMainWindow):
         if directory:
             self.file_manager.add_temp_directory(directory)
             self.ui.tempDirListWidget.addItem(directory)
+            self.config_manager.add_temp_directory(directory)
     
     def _remove_temp_directory(self):
         """移除临时目录"""
@@ -147,6 +186,7 @@ class MainWindow(QMainWindow):
             directory = current_item.text()
             self.file_manager.temp_directories.remove(directory)
             self.ui.tempDirListWidget.takeItem(self.ui.tempDirListWidget.row(current_item))
+            self.config_manager.remove_temp_directory(directory)
     
     def _scan_temp_files(self):
         """扫描临时文件"""
@@ -246,6 +286,65 @@ class MainWindow(QMainWindow):
         self.ui.memoryProgressBar.setStyleSheet(
             "QProgressBar::chunk { background-color: red; }" if alerts['memory_alert'] else "QProgressBar::chunk { background-color: green; }"
         )
+    
+    def _update_smtp_settings(self):
+        """更新SMTP服务器设置"""
+        settings = {
+            'smtp_server': self.ui.smtpServerLineEdit.text(),
+            'smtp_port': self.ui.smtpPortSpinBox.value(),
+            'smtp_username': self.ui.smtpUsernameLineEdit.text(),
+            'smtp_password': self.ui.smtpPasswordLineEdit.text(),
+            'use_tls': self.ui.useTlsCheckBox.isChecked(),
+            'alert_interval': self.ui.alertIntervalSpinBox.value()
+        }
+        self.notification_manager.configure_smtp(settings)
+        self.config_manager.set_notification_config(settings)
+    
+    def _add_recipient(self):
+        """添加收件人"""
+        email = self.ui.recipientLineEdit.text().strip()
+        if email:
+            self.notification_manager.add_recipient(email)
+            self.ui.recipientsListWidget.addItem(email)
+            self.ui.recipientLineEdit.clear()
+            self.config_manager.add_recipient(email)
+    
+    def _remove_recipient(self):
+        """移除收件人"""
+        current_item = self.ui.recipientsListWidget.currentItem()
+        if current_item:
+            email = current_item.text()
+            self.notification_manager.recipients.remove(email)
+            self.ui.recipientsListWidget.takeItem(self.ui.recipientsListWidget.row(current_item))
+            self.config_manager.remove_recipient(email)
+    
+    def _update_alerts(self, alerts):
+        """更新告警状态"""
+        # 根据阈值设置进度条样式
+        self.ui.cpuProgressBar.setStyleSheet(
+            "QProgressBar::chunk { background-color: red; }" if alerts['cpu_alert'] else "QProgressBar::chunk { background-color: green; }"
+        )
+        self.ui.memoryProgressBar.setStyleSheet(
+            "QProgressBar::chunk { background-color: red; }" if alerts['memory_alert'] else "QProgressBar::chunk { background-color: green; }"
+        )
+        
+        # 如果有告警，发送邮件通知
+        if any(alerts.values()):
+            system_info = {
+                'cpu_percent': float(self.ui.cpuPercentLabel.text().strip('%')),
+                'memory_percent': float(self.ui.memoryPercentLabel.text().strip('%'))
+            }
+            self.notification_manager.send_system_alert(system_info, alerts)
+    
+    def _update_cpu_threshold(self, value):
+        """更新CPU阈值"""
+        self.system_monitor.set_threshold('cpu_percent', float(value))
+        self.config_manager.set_system_monitor_config(cpu_percent=float(value))
+    
+    def _update_memory_threshold(self, value):
+        """更新内存阈值"""
+        self.system_monitor.set_threshold('memory_percent', float(value))
+        self.config_manager.set_system_monitor_config(memory_percent=float(value))
     
     def closeEvent(self, event):
         """窗口关闭事件"""

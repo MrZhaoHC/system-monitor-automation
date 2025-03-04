@@ -15,10 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGroupBox, QHBoxLayout, QLabel,
-    QListWidget, QListWidgetItem, QMainWindow, QProgressBar,
-    QPushButton, QSizePolicy, QSpinBox, QStatusBar,
-    QTabWidget, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QGroupBox, QHBoxLayout,
+    QLabel, QLineEdit, QListWidget, QListWidgetItem,
+    QMainWindow, QProgressBar, QPushButton, QSizePolicy,
+    QSpacerItem, QSpinBox, QStatusBar, QTabWidget,
+    QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -196,6 +197,138 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.fileManagerTab, "")
         self.notificationTab = QWidget()
         self.notificationTab.setObjectName(u"notificationTab")
+        self.verticalLayout_9 = QVBoxLayout(self.notificationTab)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.smtpGroupBox = QGroupBox(self.notificationTab)
+        self.smtpGroupBox.setObjectName(u"smtpGroupBox")
+        self.verticalLayout_10 = QVBoxLayout(self.smtpGroupBox)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.label_4 = QLabel(self.smtpGroupBox)
+        self.label_4.setObjectName(u"label_4")
+
+        self.horizontalLayout_7.addWidget(self.label_4)
+
+        self.smtpServerLineEdit = QLineEdit(self.smtpGroupBox)
+        self.smtpServerLineEdit.setObjectName(u"smtpServerLineEdit")
+
+        self.horizontalLayout_7.addWidget(self.smtpServerLineEdit)
+
+
+        self.verticalLayout_10.addLayout(self.horizontalLayout_7)
+
+        self.horizontalLayout_8 = QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
+        self.label_5 = QLabel(self.smtpGroupBox)
+        self.label_5.setObjectName(u"label_5")
+
+        self.horizontalLayout_8.addWidget(self.label_5)
+
+        self.smtpPortSpinBox = QSpinBox(self.smtpGroupBox)
+        self.smtpPortSpinBox.setObjectName(u"smtpPortSpinBox")
+        self.smtpPortSpinBox.setMaximum(65535)
+        self.smtpPortSpinBox.setValue(587)
+
+        self.horizontalLayout_8.addWidget(self.smtpPortSpinBox)
+
+
+        self.verticalLayout_10.addLayout(self.horizontalLayout_8)
+
+        self.horizontalLayout_9 = QHBoxLayout()
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.label_6 = QLabel(self.smtpGroupBox)
+        self.label_6.setObjectName(u"label_6")
+
+        self.horizontalLayout_9.addWidget(self.label_6)
+
+        self.smtpUsernameLineEdit = QLineEdit(self.smtpGroupBox)
+        self.smtpUsernameLineEdit.setObjectName(u"smtpUsernameLineEdit")
+
+        self.horizontalLayout_9.addWidget(self.smtpUsernameLineEdit)
+
+
+        self.verticalLayout_10.addLayout(self.horizontalLayout_9)
+
+        self.horizontalLayout_10 = QHBoxLayout()
+        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.label_7 = QLabel(self.smtpGroupBox)
+        self.label_7.setObjectName(u"label_7")
+
+        self.horizontalLayout_10.addWidget(self.label_7)
+
+        self.smtpPasswordLineEdit = QLineEdit(self.smtpGroupBox)
+        self.smtpPasswordLineEdit.setObjectName(u"smtpPasswordLineEdit")
+        self.smtpPasswordLineEdit.setEchoMode(QLineEdit.Password)
+
+        self.horizontalLayout_10.addWidget(self.smtpPasswordLineEdit)
+
+
+        self.verticalLayout_10.addLayout(self.horizontalLayout_10)
+
+        self.horizontalLayout_12 = QHBoxLayout()
+        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
+        self.useTlsCheckBox = QCheckBox(self.smtpGroupBox)
+        self.useTlsCheckBox.setObjectName(u"useTlsCheckBox")
+        self.useTlsCheckBox.setChecked(True)
+
+        self.horizontalLayout_12.addWidget(self.useTlsCheckBox)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_12.addItem(self.horizontalSpacer)
+
+        self.label_8 = QLabel(self.smtpGroupBox)
+        self.label_8.setObjectName(u"label_8")
+
+        self.horizontalLayout_12.addWidget(self.label_8)
+
+        self.alertIntervalSpinBox = QSpinBox(self.smtpGroupBox)
+        self.alertIntervalSpinBox.setObjectName(u"alertIntervalSpinBox")
+        self.alertIntervalSpinBox.setMinimum(1)
+        self.alertIntervalSpinBox.setMaximum(1440)
+        self.alertIntervalSpinBox.setValue(10)
+
+        self.horizontalLayout_12.addWidget(self.alertIntervalSpinBox)
+
+
+        self.verticalLayout_10.addLayout(self.horizontalLayout_12)
+
+
+        self.verticalLayout_9.addWidget(self.smtpGroupBox)
+
+        self.recipientsGroupBox = QGroupBox(self.notificationTab)
+        self.recipientsGroupBox.setObjectName(u"recipientsGroupBox")
+        self.verticalLayout_11 = QVBoxLayout(self.recipientsGroupBox)
+        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.horizontalLayout_11 = QHBoxLayout()
+        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
+        self.recipientLineEdit = QLineEdit(self.recipientsGroupBox)
+        self.recipientLineEdit.setObjectName(u"recipientLineEdit")
+
+        self.horizontalLayout_11.addWidget(self.recipientLineEdit)
+
+        self.addRecipientButton = QPushButton(self.recipientsGroupBox)
+        self.addRecipientButton.setObjectName(u"addRecipientButton")
+
+        self.horizontalLayout_11.addWidget(self.addRecipientButton)
+
+
+        self.verticalLayout_11.addLayout(self.horizontalLayout_11)
+
+        self.recipientsListWidget = QListWidget(self.recipientsGroupBox)
+        self.recipientsListWidget.setObjectName(u"recipientsListWidget")
+
+        self.verticalLayout_11.addWidget(self.recipientsListWidget)
+
+        self.removeRecipientButton = QPushButton(self.recipientsGroupBox)
+        self.removeRecipientButton.setObjectName(u"removeRecipientButton")
+
+        self.verticalLayout_11.addWidget(self.removeRecipientButton)
+
+
+        self.verticalLayout_9.addWidget(self.recipientsGroupBox)
+
         self.tabWidget.addTab(self.notificationTab, "")
         self.reportTab = QWidget()
         self.reportTab.setObjectName(u"reportTab")
@@ -235,6 +368,17 @@ class Ui_MainWindow(object):
         self.scanFilesButton.setText(QCoreApplication.translate("MainWindow", u"\u626b\u63cf\u6587\u4ef6", None))
         self.cleanFilesButton.setText(QCoreApplication.translate("MainWindow", u"\u6e05\u7406\u6587\u4ef6", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.fileManagerTab), QCoreApplication.translate("MainWindow", u"\u6587\u4ef6\u7ba1\u7406", None))
+        self.smtpGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"SMTP\u670d\u52a1\u5668\u8bbe\u7f6e", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u670d\u52a1\u5668\u5730\u5740\uff1a", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u7aef\u53e3\uff1a", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"\u7528\u6237\u540d\uff1a", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"\u5bc6\u7801\uff1a", None))
+        self.useTlsCheckBox.setText(QCoreApplication.translate("MainWindow", u"\u4f7f\u7528TLS\u52a0\u5bc6", None))
+        self.label_8.setText(QCoreApplication.translate("MainWindow", u"\u544a\u8b66\u65f6\u95f4\u95f4\u9694\uff08\u5206\u949f\uff09\uff1a", None))
+        self.recipientsGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u6536\u4ef6\u4eba\u7ba1\u7406", None))
+        self.recipientLineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"\u8f93\u5165\u6536\u4ef6\u4eba\u90ae\u7bb1\u5730\u5740", None))
+        self.addRecipientButton.setText(QCoreApplication.translate("MainWindow", u"\u6dfb\u52a0", None))
+        self.removeRecipientButton.setText(QCoreApplication.translate("MainWindow", u"\u79fb\u9664\u9009\u4e2d", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.notificationTab), QCoreApplication.translate("MainWindow", u"\u901a\u77e5\u8bbe\u7f6e", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.reportTab), QCoreApplication.translate("MainWindow", u"\u62a5\u544a\u751f\u6210", None))
     # retranslateUi

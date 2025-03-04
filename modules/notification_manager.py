@@ -1,22 +1,27 @@
 import smtplib
 from email.mime.text import MIMEText
+from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from typing import Dict, List
 
 class NotificationManager:
     def __init__(self):
         self.smtp_settings = {
-            'server': '',
-            'port': 587,
-            'username': '',
-            'password': '',
-            'use_tls': True
+            'smtp_server': 'smtp.163.com',  # 163邮箱服务器
+            'smtp_port': 465,  # 使用SSL的端口
+            'smtp_username': 'your_email@163.com',  # 替换为您的163邮箱
+            'smtp_password': 'your_auth_code',  # 替换为您获取的授权码
+            'use_tls': False  # 163邮箱使用SSL而不是TLS
         }
         self.recipients = []
+        self.last_alert_time = None  # 记录上次发送告警的时间
+        self.alert_interval = 600  # 告警间隔时间（秒），默认10分钟
     
     def configure_smtp(self, settings: Dict[str, any]) -> None:
         """配置SMTP服务器设置"""
         self.smtp_settings.update(settings)
+        if 'alert_interval' in settings:
+            self.alert_interval = settings['alert_interval'] * 60  # 将分钟转换为秒
     
     def add_recipient(self, email: str) -> None:
         """添加收件人邮箱"""
@@ -25,32 +30,39 @@ class NotificationManager:
     
     def send_alert(self, subject: str, message: str) -> bool:
         """发送警报邮件"""
-        if not all([self.smtp_settings['server'],
-                   self.smtp_settings['username'],
-                   self.smtp_settings['password'],
+        current_time = datetime.now()
+
+        # 检查是否需要发送告警（是否超过间隔时间）
+        if self.last_alert_time and (current_time - self.last_alert_time).total_seconds() < self.alert_interval:
+            return False
+            
+        if not all([self.smtp_settings['smtp_server'],
+                   self.smtp_settings['smtp_username'],
+                   self.smtp_settings['smtp_password'],
                    self.recipients]):
             return False
         
         try:
             msg = MIMEMultipart()
-            msg['From'] = self.smtp_settings['username']
+            msg['From'] = self.smtp_settings['smtp_username']
             msg['To'] = ', '.join(self.recipients)
             msg['Subject'] = subject
             
             msg.attach(MIMEText(message, 'plain'))
             
-            server = smtplib.SMTP(self.smtp_settings['server'],
-                                 self.smtp_settings['port'])
-            if self.smtp_settings['use_tls']:
-                server.starttls()
+            # 使用SSL连接
+            server = smtplib.SMTP_SSL(self.smtp_settings['smtp_server'],
+                                   self.smtp_settings['smtp_port'])
             
-            server.login(self.smtp_settings['username'],
-                        self.smtp_settings['password'])
+            server.login(self.smtp_settings['smtp_username'],
+                        self.smtp_settings['smtp_password'])
             
             server.send_message(msg)
             server.quit()
+            self.last_alert_time = current_time  # 更新最后发送时间
             return True
-        except Exception:
+        except Exception as e:
+            print(f"发送邮件失败: {str(e)}")  # 添加错误日志
             return False
     
     def send_system_alert(self, system_info: Dict[str, any],
