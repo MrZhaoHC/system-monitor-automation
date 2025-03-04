@@ -1,56 +1,71 @@
 import os
-import shutil
-from datetime import datetime, timedelta
-from typing import List, Dict
+from datetime import datetime
 
 class FileManager:
     def __init__(self):
         self.temp_directories = []
-        self.file_age_threshold = 7  # 默认清理7天前的临时文件
+        self.age_threshold = 7  # 默认7天
     
-    def add_temp_directory(self, directory: str) -> None:
-        """添加需要监控的临时文件目录"""
-        if os.path.exists(directory):
+    def add_temp_directory(self, directory):
+        """添加临时目录"""
+        if os.path.isdir(directory) and directory not in self.temp_directories:
             self.temp_directories.append(directory)
     
-    def scan_temp_files(self) -> List[Dict[str, any]]:
+    def scan_temp_files(self):
         """扫描临时文件"""
         temp_files = []
         for directory in self.temp_directories:
-            for root, _, files in os.walk(directory):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    file_stat = os.stat(file_path)
-                    file_info = {
-                        'path': file_path,
-                        'size': file_stat.st_size,
-                        'modified_time': datetime.fromtimestamp(file_stat.st_mtime)
-                    }
-                    temp_files.append(file_info)
+            try:
+                for root, _, files in os.walk(directory):
+                    for file in files:
+                        try:
+                            file_path = os.path.join(root, file)
+                            file_stat = os.stat(file_path)
+                            # 使用try-except处理时间戳转换
+                            try:
+                                modified_time = datetime.fromtimestamp(file_stat.st_mtime)
+                            except (OSError, ValueError) as e:
+                                print(f"Error converting timestamp for {file_path}: {e}")
+                                continue
+                            
+                            temp_files.append({
+                                'path': file_path,
+                                'size': file_stat.st_size,
+                                'modified_time': modified_time
+                            })
+                        except OSError as e:
+                            print(f"Error accessing file {file}: {e}")
+                            continue
+            except OSError as e:
+                print(f"Error accessing directory {directory}: {e}")
+                continue
         return temp_files
     
-    def clean_old_files(self) -> Dict[str, int]:
-        """清理过期的临时文件"""
-        cleaned_count = 0
-        cleaned_size = 0
-        threshold_date = datetime.now() - timedelta(days=self.file_age_threshold)
+    def clean_old_files(self):
+        """清理过期文件"""
+        now = datetime.now()
+        files_cleaned = 0
+        bytes_cleaned = 0
         
         temp_files = self.scan_temp_files()
         for file_info in temp_files:
-            if file_info['modified_time'] < threshold_date:
-                try:
-                    os.remove(file_info['path'])
-                    cleaned_count += 1
-                    cleaned_size += file_info['size']
-                except OSError:
-                    continue
+            try:
+                file_age = (now - file_info['modified_time']).days
+                if file_age >= self.age_threshold:
+                    try:
+                        os.remove(file_info['path'])
+                        files_cleaned += 1
+                        bytes_cleaned += file_info['size']
+                    except OSError as e:
+                        print(f"Error deleting file {file_info['path']}: {e}")
+            except TypeError as e:
+                print(f"Error calculating file age for {file_info['path']}: {e}")
         
         return {
-            'files_cleaned': cleaned_count,
-            'bytes_cleaned': cleaned_size
+            'files_cleaned': files_cleaned,
+            'bytes_cleaned': bytes_cleaned
         }
     
-    def set_age_threshold(self, days: int) -> None:
+    def set_age_threshold(self, days):
         """设置文件年龄阈值"""
-        if days > 0:
-            self.file_age_threshold = days
+        self.age_threshold = days

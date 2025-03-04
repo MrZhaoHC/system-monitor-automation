@@ -16,8 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QGroupBox, QHBoxLayout, QLabel,
-    QMainWindow, QProgressBar, QSizePolicy, QSpinBox,
-    QStatusBar, QTabWidget, QVBoxLayout, QWidget)
+    QListWidget, QListWidgetItem, QMainWindow, QProgressBar,
+    QPushButton, QSizePolicy, QSpinBox, QStatusBar,
+    QTabWidget, QTextEdit, QVBoxLayout, QWidget)
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
@@ -116,6 +117,81 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.systemMonitorTab, "")
         self.fileManagerTab = QWidget()
         self.fileManagerTab.setObjectName(u"fileManagerTab")
+        self.verticalLayout_5 = QVBoxLayout(self.fileManagerTab)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.tempDirGroupBox = QGroupBox(self.fileManagerTab)
+        self.tempDirGroupBox.setObjectName(u"tempDirGroupBox")
+        self.verticalLayout_6 = QVBoxLayout(self.tempDirGroupBox)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.tempDirListWidget = QListWidget(self.tempDirGroupBox)
+        self.tempDirListWidget.setObjectName(u"tempDirListWidget")
+
+        self.horizontalLayout_5.addWidget(self.tempDirListWidget)
+
+        self.verticalLayout_7 = QVBoxLayout()
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.addTempDirButton = QPushButton(self.tempDirGroupBox)
+        self.addTempDirButton.setObjectName(u"addTempDirButton")
+
+        self.verticalLayout_7.addWidget(self.addTempDirButton)
+
+        self.removeTempDirButton = QPushButton(self.tempDirGroupBox)
+        self.removeTempDirButton.setObjectName(u"removeTempDirButton")
+
+        self.verticalLayout_7.addWidget(self.removeTempDirButton)
+
+
+        self.horizontalLayout_5.addLayout(self.verticalLayout_7)
+
+
+        self.verticalLayout_6.addLayout(self.horizontalLayout_5)
+
+
+        self.verticalLayout_5.addWidget(self.tempDirGroupBox)
+
+        self.cleanupGroupBox = QGroupBox(self.fileManagerTab)
+        self.cleanupGroupBox.setObjectName(u"cleanupGroupBox")
+        self.verticalLayout_8 = QVBoxLayout(self.cleanupGroupBox)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.label_3 = QLabel(self.cleanupGroupBox)
+        self.label_3.setObjectName(u"label_3")
+
+        self.horizontalLayout_6.addWidget(self.label_3)
+
+        self.fileAgeThresholdSpinBox = QSpinBox(self.cleanupGroupBox)
+        self.fileAgeThresholdSpinBox.setObjectName(u"fileAgeThresholdSpinBox")
+        self.fileAgeThresholdSpinBox.setMinimum(1)
+        self.fileAgeThresholdSpinBox.setMaximum(365)
+        self.fileAgeThresholdSpinBox.setValue(7)
+
+        self.horizontalLayout_6.addWidget(self.fileAgeThresholdSpinBox)
+
+
+        self.verticalLayout_8.addLayout(self.horizontalLayout_6)
+
+        self.scanFilesButton = QPushButton(self.cleanupGroupBox)
+        self.scanFilesButton.setObjectName(u"scanFilesButton")
+
+        self.verticalLayout_8.addWidget(self.scanFilesButton)
+
+        self.scanResultTextEdit = QTextEdit(self.cleanupGroupBox)
+        self.scanResultTextEdit.setObjectName(u"scanResultTextEdit")
+        self.scanResultTextEdit.setReadOnly(True)
+
+        self.verticalLayout_8.addWidget(self.scanResultTextEdit)
+
+        self.cleanFilesButton = QPushButton(self.cleanupGroupBox)
+        self.cleanFilesButton.setObjectName(u"cleanFilesButton")
+
+        self.verticalLayout_8.addWidget(self.cleanFilesButton)
+
+
+        self.verticalLayout_5.addWidget(self.cleanupGroupBox)
+
         self.tabWidget.addTab(self.fileManagerTab, "")
         self.notificationTab = QWidget()
         self.notificationTab.setObjectName(u"notificationTab")
@@ -147,6 +223,13 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u5185\u5b58\u4f7f\u7528\u7387\u9608\u503c\uff1a", None))
         self.memoryThresholdSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u"%", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.systemMonitorTab), QCoreApplication.translate("MainWindow", u"\u7cfb\u7edf\u76d1\u63a7", None))
+        self.tempDirGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u4e34\u65f6\u76ee\u5f55\u7ba1\u7406", None))
+        self.addTempDirButton.setText(QCoreApplication.translate("MainWindow", u"\u6dfb\u52a0\u76ee\u5f55", None))
+        self.removeTempDirButton.setText(QCoreApplication.translate("MainWindow", u"\u79fb\u9664\u76ee\u5f55", None))
+        self.cleanupGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u6587\u4ef6\u6e05\u7406", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u6e05\u7406\u9608\u503c\uff08\u5929\uff09\uff1a", None))
+        self.scanFilesButton.setText(QCoreApplication.translate("MainWindow", u"\u626b\u63cf\u6587\u4ef6", None))
+        self.cleanFilesButton.setText(QCoreApplication.translate("MainWindow", u"\u6e05\u7406\u6587\u4ef6", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.fileManagerTab), QCoreApplication.translate("MainWindow", u"\u6587\u4ef6\u7ba1\u7406", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.notificationTab), QCoreApplication.translate("MainWindow", u"\u901a\u77e5\u8bbe\u7f6e", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.reportTab), QCoreApplication.translate("MainWindow", u"\u62a5\u544a\u751f\u6210", None))
