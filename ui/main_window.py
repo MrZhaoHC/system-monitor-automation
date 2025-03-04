@@ -45,6 +45,8 @@ class FileManagerThread(QThread):
 
     def stop(self):
         self.running = False
+        if self.scanning:
+            self.file_manager.stop_scan()  # 通知文件管理器停止扫描
         self.wait()
 
     def stop_scanning(self):
@@ -204,10 +206,10 @@ class MainWindow(QMainWindow):
         """更新告警状态"""
         # 根据阈值设置进度条样式
         self.ui.cpuProgressBar.setStyleSheet(
-            "QProgressBar::chunk { background-color: red; }" if alerts['cpu_alert'] else ""
+            "QProgressBar::chunk { background-color: red; }" if alerts['cpu_alert'] else "QProgressBar::chunk { background-color: green; }"
         )
         self.ui.memoryProgressBar.setStyleSheet(
-            "QProgressBar::chunk { background-color: red; }" if alerts['memory_alert'] else ""
+            "QProgressBar::chunk { background-color: red; }" if alerts['memory_alert'] else "QProgressBar::chunk { background-color: green; }"
         )
     
     def closeEvent(self, event):
@@ -215,6 +217,6 @@ class MainWindow(QMainWindow):
         # 停止监控线程
         self.monitor_thread.stop()
         self.monitor_thread.wait()
-        if self.file_manager_thread.isRunning():
-            self.file_manager_thread.stop()
+        self.file_manager_thread.stop()
+        self.file_manager_thread.wait()
         super().closeEvent(event)

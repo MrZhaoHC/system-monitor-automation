@@ -5,19 +5,31 @@ class FileManager:
     def __init__(self):
         self.temp_directories = []
         self.age_threshold = 7  # 默认7天
+        self.scanning = True  # 添加扫描状态控制
     
     def add_temp_directory(self, directory):
         """添加临时目录"""
         if os.path.isdir(directory) and directory not in self.temp_directories:
             self.temp_directories.append(directory)
     
+    def stop_scan(self):
+        """停止扫描"""
+        self.scanning = False
+    
     def scan_temp_files(self):
         """扫描临时文件"""
+        self.scanning = True
         temp_files = []
         for directory in self.temp_directories:
+            if not self.scanning:  # 检查是否需要停止扫描
+                break
             try:
                 for root, _, files in os.walk(directory):
+                    if not self.scanning:  # 检查是否需要停止扫描
+                        break
                     for file in files:
+                        if not self.scanning:  # 检查是否需要停止扫描
+                            break
                         try:
                             file_path = os.path.join(root, file)
                             file_stat = os.stat(file_path)
