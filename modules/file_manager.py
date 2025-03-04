@@ -6,6 +6,7 @@ class FileManager:
         self.temp_directories = []
         self.age_threshold = 7  # 默认7天
         self.scanning = True  # 添加扫描状态控制
+        self.cached_temp_files = []  # 添加缓存变量存储扫描结果
     
     def add_temp_directory(self, directory):
         """添加临时目录"""
@@ -19,7 +20,7 @@ class FileManager:
     def scan_temp_files(self):
         """扫描临时文件"""
         self.scanning = True
-        temp_files = []
+        self.cached_temp_files = []  # 重置缓存
         for directory in self.temp_directories:
             if not self.scanning:  # 检查是否需要停止扫描
                 break
@@ -40,7 +41,7 @@ class FileManager:
                                 print(f"Error converting timestamp for {file_path}: {e}")
                                 continue
                             
-                            temp_files.append({
+                            self.cached_temp_files.append({
                                 'path': file_path,
                                 'size': file_stat.st_size,
                                 'modified_time': modified_time
@@ -51,7 +52,7 @@ class FileManager:
             except OSError as e:
                 print(f"Error accessing directory {directory}: {e}")
                 continue
-        return temp_files
+        return self.cached_temp_files
     
     def clean_old_files(self):
         """清理过期文件"""
@@ -59,8 +60,8 @@ class FileManager:
         files_cleaned = 0
         bytes_cleaned = 0
         
-        temp_files = self.scan_temp_files()
-        for file_info in temp_files:
+        # 直接使用缓存的扫描结果
+        for file_info in self.cached_temp_files:
             try:
                 file_age = (now - file_info['modified_time']).days
                 if file_age >= self.age_threshold:

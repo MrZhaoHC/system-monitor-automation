@@ -4,7 +4,8 @@
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
-    <x>0</x>    <y>0</y>
+    <x>0</x>
+    <y>0</y>
     <width>800</width>
     <height>600</height>
    </rect>
@@ -16,6 +17,9 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
       <widget class="QWidget" name="systemMonitorTab">
        <attribute name="title">
         <string>系统监控</string>
@@ -182,7 +186,7 @@
              <item>
               <widget class="QSpinBox" name="fileAgeThresholdSpinBox">
                <property name="minimum">
-                <number>1</number>
+                <number>0</number>
                </property>
                <property name="maximum">
                 <number>365</number>
@@ -236,4 +240,6 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <resources/>
+ <connections/>
 </ui>

@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (QApplication, QGroupBox, QHBoxLayout, QLabel,
     QListWidget, QListWidgetItem, QMainWindow, QProgressBar,
     QPushButton, QSizePolicy, QSpinBox, QStatusBar,
     QTabWidget, QTextEdit, QVBoxLayout, QWidget)
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
@@ -164,7 +165,7 @@ class Ui_MainWindow(object):
 
         self.fileAgeThresholdSpinBox = QSpinBox(self.cleanupGroupBox)
         self.fileAgeThresholdSpinBox.setObjectName(u"fileAgeThresholdSpinBox")
-        self.fileAgeThresholdSpinBox.setMinimum(1)
+        self.fileAgeThresholdSpinBox.setMinimum(0)
         self.fileAgeThresholdSpinBox.setMaximum(365)
         self.fileAgeThresholdSpinBox.setValue(7)
 
@@ -208,6 +209,9 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
+
+        self.tabWidget.setCurrentIndex(1)
+
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi

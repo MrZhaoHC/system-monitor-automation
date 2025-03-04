@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QMainWindow, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import QThread, Signal
+from datetime import datetime
 from .ui_main_window import Ui_MainWindow
 from modules.system_monitor import SystemMonitor
 from modules.file_manager import FileManager
@@ -97,8 +98,8 @@ class MainWindow(QMainWindow):
         
         # 创建并启动监控线程
         self.monitor_thread = SystemMonitorThread(self.system_monitor)
-        self.monitor_thread.system_info_updated.connect(self.update_system_info)
-        self.monitor_thread.alerts_updated.connect(self.update_alerts)
+        self.monitor_thread.system_info_updated.connect(self._update_system_info)
+        self.monitor_thread.alerts_updated.connect(self._update_alerts)
         self.monitor_thread.start()
 
         # 初始化文件管理器线程
@@ -111,6 +112,9 @@ class MainWindow(QMainWindow):
         # 设置初始阈值
         self.ui.cpuThresholdSpinBox.setValue(int(self.system_monitor.thresholds['cpu_percent']))
         self.ui.memoryThresholdSpinBox.setValue(int(self.system_monitor.thresholds['memory_percent']))
+
+        # 设置初始文件管理UI
+        self.ui.cleanFilesButton.setEnabled(False)
         
         # 连接阈值变化信号
         self.ui.cpuThresholdSpinBox.valueChanged.connect(
@@ -156,6 +160,7 @@ class MainWindow(QMainWindow):
             self.ui.scanFilesButton.setText("停止")
             self.ui.scanResultTextEdit.setText("正在扫描...")
             self.file_manager_thread.scan_files()
+        self.ui.cleanFilesButton.setEnabled(False)
 
     def _on_scan_completed(self, temp_files):
         """处理扫描完成信号"""
@@ -174,23 +179,53 @@ class MainWindow(QMainWindow):
         result_text.append(f"总大小: {total_size / (1024 * 1024):.2f} MB")
         
         self.ui.scanResultTextEdit.setText("\n".join(result_text))
-        self.ui.scanFilesButton.setEnabled(True)
+        self.ui.cleanFilesButton.setEnabled(True)
     
     def _clean_old_files(self):
-            """清理旧文件"""
-            if not self.file_manager_thread.isRunning():
-                self.ui.cleanFilesButton.setEnabled(False)  # 禁用按钮防止重复操作
-                self.ui.scanResultTextEdit.setText("正在清理...")
-                self.file_manager_thread.clean_files()
+        """清理旧文件"""
+        if not self.file_manager_thread.isRunning():
+            # 计算要清理的文件数量和总大小
+            now = datetime.now()
+            files_to_clean = 0
+            total_size = 0
+            for file_info in self.file_manager.cached_temp_files:
+                try:
+                    file_age = (now - file_info['modified_time']).days
+                    if file_age >= self.file_manager.age_threshold:
+                        files_to_clean += 1
+                        total_size += file_info['size']
+                except TypeError:
+                    continue
+            
+            if files_to_clean > 0:
+                # 显示确认对话框
+                size_mb = total_size / (1024 * 1024)
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Icon.Question)
+                msg.setWindowTitle("确认清理")
+                msg.setText(f"确定要清理以下文件吗？\n\n文件数量：{files_to_clean}\n总大小：{size_mb:.2f} MB")
+                msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                msg.setDefaultButton(QMessageBox.StandardButton.No)
+                
+                if msg.exec() == QMessageBox.StandardButton.Yes:
+                    self.ui.cleanFilesButton.setEnabled(False)  # 禁用按钮防止重复操作
+                    self.ui.scanResultTextEdit.setText("正在清理...")
+                    self.file_manager_thread.clean_files()
+            else:
+                # 如果没有需要清理的文件，显示提示
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Icon.Information)
+                msg.setWindowTitle("提示")
+                msg.setText("没有需要清理的文件")
+                msg.exec()
 
     def _on_clean_completed(self, result):
         """处理清理完成信号"""
         cleaned_size_mb = result['bytes_cleaned'] / (1024 * 1024)
         result_text = f"清理完成\n已清理文件数: {result['files_cleaned']}\n清理空间: {cleaned_size_mb:.2f} MB"
         self.ui.scanResultTextEdit.setText(result_text)
-        self.ui.cleanFilesButton.setEnabled(True)  # 重新启用按钮
     
-    def update_system_info(self, system_info):
+    def _update_system_info(self, system_info):
         """更新系统信息显示"""
         # 更新CPU信息
         cpu_percent = system_info['cpu_percent']
@@ -202,7 +237,7 @@ class MainWindow(QMainWindow):
         self.ui.memoryProgressBar.setValue(int(memory_percent))
         self.ui.memoryPercentLabel.setText(f"{memory_percent:.1f}%")
     
-    def update_alerts(self, alerts):
+    def _update_alerts(self, alerts):
         """更新告警状态"""
         # 根据阈值设置进度条样式
         self.ui.cpuProgressBar.setStyleSheet(
