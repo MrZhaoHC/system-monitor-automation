@@ -1,0 +1,154 @@
+# -*- coding: utf-8 -*-
+
+################################################################################
+## Form generated from reading UI file 'main_window.ui'
+##
+## Created by: Qt User Interface Compiler version 6.8.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QApplication, QGroupBox, QHBoxLayout, QLabel,
+    QMainWindow, QProgressBar, QSizePolicy, QSpinBox,
+    QStatusBar, QTabWidget, QVBoxLayout, QWidget)
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        if not MainWindow.objectName():
+            MainWindow.setObjectName(u"MainWindow")
+        MainWindow.resize(800, 600)
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName(u"centralwidget")
+        self.verticalLayout = QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.tabWidget = QTabWidget(self.centralwidget)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.systemMonitorTab = QWidget()
+        self.systemMonitorTab.setObjectName(u"systemMonitorTab")
+        self.verticalLayout_2 = QVBoxLayout(self.systemMonitorTab)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.cpuGroupBox = QGroupBox(self.systemMonitorTab)
+        self.cpuGroupBox.setObjectName(u"cpuGroupBox")
+        self.verticalLayout_3 = QVBoxLayout(self.cpuGroupBox)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.cpuProgressBar = QProgressBar(self.cpuGroupBox)
+        self.cpuProgressBar.setObjectName(u"cpuProgressBar")
+        self.cpuProgressBar.setValue(0)
+
+        self.horizontalLayout.addWidget(self.cpuProgressBar)
+
+        self.cpuPercentLabel = QLabel(self.cpuGroupBox)
+        self.cpuPercentLabel.setObjectName(u"cpuPercentLabel")
+
+        self.horizontalLayout.addWidget(self.cpuPercentLabel)
+
+
+        self.verticalLayout_3.addLayout(self.horizontalLayout)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label = QLabel(self.cpuGroupBox)
+        self.label.setObjectName(u"label")
+
+        self.horizontalLayout_2.addWidget(self.label)
+
+        self.cpuThresholdSpinBox = QSpinBox(self.cpuGroupBox)
+        self.cpuThresholdSpinBox.setObjectName(u"cpuThresholdSpinBox")
+        self.cpuThresholdSpinBox.setMaximum(100)
+        self.cpuThresholdSpinBox.setValue(80)
+
+        self.horizontalLayout_2.addWidget(self.cpuThresholdSpinBox)
+
+
+        self.verticalLayout_3.addLayout(self.horizontalLayout_2)
+
+
+        self.verticalLayout_2.addWidget(self.cpuGroupBox)
+
+        self.memoryGroupBox = QGroupBox(self.systemMonitorTab)
+        self.memoryGroupBox.setObjectName(u"memoryGroupBox")
+        self.verticalLayout_4 = QVBoxLayout(self.memoryGroupBox)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.memoryProgressBar = QProgressBar(self.memoryGroupBox)
+        self.memoryProgressBar.setObjectName(u"memoryProgressBar")
+        self.memoryProgressBar.setValue(0)
+
+        self.horizontalLayout_3.addWidget(self.memoryProgressBar)
+
+        self.memoryPercentLabel = QLabel(self.memoryGroupBox)
+        self.memoryPercentLabel.setObjectName(u"memoryPercentLabel")
+
+        self.horizontalLayout_3.addWidget(self.memoryPercentLabel)
+
+
+        self.verticalLayout_4.addLayout(self.horizontalLayout_3)
+
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.label_2 = QLabel(self.memoryGroupBox)
+        self.label_2.setObjectName(u"label_2")
+
+        self.horizontalLayout_4.addWidget(self.label_2)
+
+        self.memoryThresholdSpinBox = QSpinBox(self.memoryGroupBox)
+        self.memoryThresholdSpinBox.setObjectName(u"memoryThresholdSpinBox")
+        self.memoryThresholdSpinBox.setMaximum(100)
+        self.memoryThresholdSpinBox.setValue(80)
+
+        self.horizontalLayout_4.addWidget(self.memoryThresholdSpinBox)
+
+
+        self.verticalLayout_4.addLayout(self.horizontalLayout_4)
+
+
+        self.verticalLayout_2.addWidget(self.memoryGroupBox)
+
+        self.tabWidget.addTab(self.systemMonitorTab, "")
+        self.fileManagerTab = QWidget()
+        self.fileManagerTab.setObjectName(u"fileManagerTab")
+        self.tabWidget.addTab(self.fileManagerTab, "")
+        self.notificationTab = QWidget()
+        self.notificationTab.setObjectName(u"notificationTab")
+        self.tabWidget.addTab(self.notificationTab, "")
+        self.reportTab = QWidget()
+        self.reportTab.setObjectName(u"reportTab")
+        self.tabWidget.addTab(self.reportTab, "")
+
+        self.verticalLayout.addWidget(self.tabWidget)
+
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.statusbar = QStatusBar(MainWindow)
+        self.statusbar.setObjectName(u"statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u7cfb\u7edf\u76d1\u63a7\u4e0e\u81ea\u52a8\u5316\u5de5\u5177", None))
+        self.cpuGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"CPU\u76d1\u63a7", None))
+        self.cpuPercentLabel.setText(QCoreApplication.translate("MainWindow", u"0%", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"CPU\u4f7f\u7528\u7387\u9608\u503c\uff1a", None))
+        self.cpuThresholdSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u"%", None))
+        self.memoryGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u5185\u5b58\u76d1\u63a7", None))
+        self.memoryPercentLabel.setText(QCoreApplication.translate("MainWindow", u"0%", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u5185\u5b58\u4f7f\u7528\u7387\u9608\u503c\uff1a", None))
+        self.memoryThresholdSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u"%", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.systemMonitorTab), QCoreApplication.translate("MainWindow", u"\u7cfb\u7edf\u76d1\u63a7", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.fileManagerTab), QCoreApplication.translate("MainWindow", u"\u6587\u4ef6\u7ba1\u7406", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.notificationTab), QCoreApplication.translate("MainWindow", u"\u901a\u77e5\u8bbe\u7f6e", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.reportTab), QCoreApplication.translate("MainWindow", u"\u62a5\u544a\u751f\u6210", None))
+    # retranslateUi
+
