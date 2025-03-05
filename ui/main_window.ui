@@ -395,6 +395,41 @@
        <attribute name="title">
         <string>报告生成</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_12">
+        <item>
+         <widget class="QGroupBox" name="reportTypeGroupBox">
+          <property name="title">
+           <string>报告类型</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_13">
+           <item>
+            <widget class="QRadioButton" name="pdfRadioButton">
+             <property name="text">
+              <string>PDF报告</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="htmlRadioButton">
+             <property name="text">
+              <string>HTML报告</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="generateReportButton">
+          <property name="text">
+           <string>生成报告</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>

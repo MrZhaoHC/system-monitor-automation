@@ -17,9 +17,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QGroupBox, QHBoxLayout,
     QLabel, QLineEdit, QListWidget, QListWidgetItem,
-    QMainWindow, QProgressBar, QPushButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QStatusBar, QTabWidget,
-    QTextEdit, QVBoxLayout, QWidget)
+    QMainWindow, QProgressBar, QPushButton, QRadioButton,
+    QSizePolicy, QSpacerItem, QSpinBox, QStatusBar,
+    QTabWidget, QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -332,6 +332,31 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.notificationTab, "")
         self.reportTab = QWidget()
         self.reportTab.setObjectName(u"reportTab")
+        self.verticalLayout_12 = QVBoxLayout(self.reportTab)
+        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.reportTypeGroupBox = QGroupBox(self.reportTab)
+        self.reportTypeGroupBox.setObjectName(u"reportTypeGroupBox")
+        self.verticalLayout_13 = QVBoxLayout(self.reportTypeGroupBox)
+        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
+        self.pdfRadioButton = QRadioButton(self.reportTypeGroupBox)
+        self.pdfRadioButton.setObjectName(u"pdfRadioButton")
+        self.pdfRadioButton.setChecked(True)
+
+        self.verticalLayout_13.addWidget(self.pdfRadioButton)
+
+        self.htmlRadioButton = QRadioButton(self.reportTypeGroupBox)
+        self.htmlRadioButton.setObjectName(u"htmlRadioButton")
+
+        self.verticalLayout_13.addWidget(self.htmlRadioButton)
+
+
+        self.verticalLayout_12.addWidget(self.reportTypeGroupBox)
+
+        self.generateReportButton = QPushButton(self.reportTab)
+        self.generateReportButton.setObjectName(u"generateReportButton")
+
+        self.verticalLayout_12.addWidget(self.generateReportButton)
+
         self.tabWidget.addTab(self.reportTab, "")
 
         self.verticalLayout.addWidget(self.tabWidget)
@@ -380,6 +405,10 @@ class Ui_MainWindow(object):
         self.addRecipientButton.setText(QCoreApplication.translate("MainWindow", u"\u6dfb\u52a0", None))
         self.removeRecipientButton.setText(QCoreApplication.translate("MainWindow", u"\u79fb\u9664\u9009\u4e2d", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.notificationTab), QCoreApplication.translate("MainWindow", u"\u901a\u77e5\u8bbe\u7f6e", None))
+        self.reportTypeGroupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u62a5\u544a\u7c7b\u578b", None))
+        self.pdfRadioButton.setText(QCoreApplication.translate("MainWindow", u"PDF\u62a5\u544a", None))
+        self.htmlRadioButton.setText(QCoreApplication.translate("MainWindow", u"HTML\u62a5\u544a", None))
+        self.generateReportButton.setText(QCoreApplication.translate("MainWindow", u"\u751f\u6210\u62a5\u544a", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.reportTab), QCoreApplication.translate("MainWindow", u"\u62a5\u544a\u751f\u6210", None))
     # retranslateUi
 

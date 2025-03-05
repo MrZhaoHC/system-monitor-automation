@@ -1,0 +1,5 @@
+# 排除reports目录中的所有内容
+reports/*
+
+# 但保留reports目录本身
+!reports/.gitkeep

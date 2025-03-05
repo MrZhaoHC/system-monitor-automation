@@ -6,6 +6,7 @@ from modules.system_monitor import SystemMonitor
 from modules.file_manager import FileManager
 from modules.notification_manager import NotificationManager
 from modules.config_manager import ConfigManager
+from modules.report_generator import ReportGenerator
 
 class FileManagerThread(QThread):
     # 定义信号
@@ -82,6 +83,28 @@ class SystemMonitorThread(QThread):
     def stop(self):
         self.running = False
 
+class ReportGeneratorThread(QThread):
+    report_generated = Signal(str)  # 报告生成完成信号
+    
+    def __init__(self, report_generator, report_type, system_data, cleanup_data):
+        super().__init__()
+        self.report_generator = report_generator
+        self.report_type = report_type
+        self.system_data = system_data
+        self.cleanup_data = cleanup_data
+    
+    def run(self):
+        try:
+            if self.report_type == 'pdf':
+                filename = self.report_generator.generate_pdf_report(
+                    self.system_data, self.cleanup_data)
+            else:
+                filename = self.report_generator.generate_html_report(
+                    self.system_data, self.cleanup_data)
+            self.report_generated.emit(filename)
+        except Exception as e:
+            print(f"生成报告失败: {str(e)}")
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -98,6 +121,14 @@ class MainWindow(QMainWindow):
         
         # 初始化文件管理器
         self.file_manager = FileManager()
+        
+        # 初始化报告生成器
+        self.report_generator = ReportGenerator()
+        
+        # 存储系统监控数据
+        self.system_data = []
+        self.cleanup_data = {'files_cleaned': 0, 'bytes_cleaned': 0}
+
         for directory in self.config_manager.get_temp_directories():
             self.file_manager.add_temp_directory(directory)
         
@@ -170,6 +201,9 @@ class MainWindow(QMainWindow):
         self.ui.alertIntervalSpinBox.valueChanged.connect(self._update_smtp_settings)
         self.ui.addRecipientButton.clicked.connect(self._add_recipient)
         self.ui.removeRecipientButton.clicked.connect(self._remove_recipient)
+
+        # 连接报告生成器相关信号
+        self.ui.generateReportButton.clicked.connect(self._generate_report)
     
     def _add_temp_directory(self):
         """添加临时目录"""
@@ -264,7 +298,42 @@ class MainWindow(QMainWindow):
         cleaned_size_mb = result['bytes_cleaned'] / (1024 * 1024)
         result_text = f"清理完成\n已清理文件数: {result['files_cleaned']}\n清理空间: {cleaned_size_mb:.2f} MB"
         self.ui.scanResultTextEdit.setText(result_text)
+        # 保存清理数据用于生成报告
+        self.cleanup_data = result
     
+    def _generate_report(self):
+        """生成报告"""
+        report_type = 'pdf' if self.ui.pdfRadioButton.isChecked() else 'html'
+        print(report_type)
+        
+        # 创建并启动报告生成线程
+        self.report_thread = ReportGeneratorThread(
+            self.report_generator,
+            report_type,
+            self.system_data,
+            self.cleanup_data
+        )
+        self.report_thread.report_generated.connect(self._on_report_generated)
+        
+        # 禁用生成按钮，防止重复操作
+        self.ui.generateReportButton.setEnabled(False)
+        self.ui.generateReportButton.setText("正在生成...")
+        
+        self.report_thread.start()
+    
+    def _on_report_generated(self, filename):
+        """处理报告生成完成信号"""
+        # 恢复按钮状态
+        self.ui.generateReportButton.setEnabled(True)
+        self.ui.generateReportButton.setText("生成报告")
+        
+        # 显示成功消息
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Information)
+        msg.setWindowTitle("成功")
+        msg.setText(f"报告已生成：\n{filename}")
+        msg.exec()
+
     def _update_system_info(self, system_info):
         """更新系统信息显示"""
         # 更新CPU信息
@@ -276,6 +345,12 @@ class MainWindow(QMainWindow):
         memory_percent = system_info['memory_percent']
         self.ui.memoryProgressBar.setValue(int(memory_percent))
         self.ui.memoryPercentLabel.setText(f"{memory_percent:.1f}%")
+        
+        # 保存系统信息用于生成报告
+        self.system_data.append(system_info)
+        # 只保留最近100条记录
+        if len(self.system_data) > 100:
+            self.system_data.pop(0)
     
     def _update_alerts(self, alerts):
         """更新告警状态"""

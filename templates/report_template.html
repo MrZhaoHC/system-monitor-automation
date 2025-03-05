@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统健康报告</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #444;
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        .cleanup-stats {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .generated-time {
+            color: #666;
+            font-size: 0.9em;
+            text-align: right;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>系统健康报告</h1>
+    
+    <h2>系统资源使用情况</h2>
+    <table>
+        <tr>
+            <th>时间</th>
+            <th>CPU使用率</th>
+            <th>内存使用率</th>
+        </tr>
+        {% for item in system_data %}
+        <tr>
+            <td>{{ item.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>{{ item.cpu_percent }}%</td>
+            <td>{{ item.memory_percent }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="cleanup-stats">
+        <h2>文件清理统计</h2>
+        <p>清理文件数量：{{ file_cleanup_data.files_cleaned }}</p>
+        <p>清理空间大小：{{ "%.2f"|format(file_cleanup_data.bytes_cleaned / 1024 / 1024) }} MB</p>
+    </div>
+
+    <div class="generated-time">
+        报告生成时间：{{ generated_time }}
+    </div>
+</body>
+</html>
