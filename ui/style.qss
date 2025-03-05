@@ -1,0 +1,139 @@
+/* 全局样式 */
+QWidget {
+    font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+    font-size: 12px;
+}
+
+/* 主窗口样式 */
+QMainWindow {
+    background-color: #f5f6fa;
+}
+
+/* 标签页样式 */
+QTabWidget::pane {
+    border: 1px solid #dcdde1;
+    background-color: white;
+    border-radius: 4px;
+}
+
+QTabBar::tab {
+    padding: 8px 16px;
+    margin-right: 2px;
+    background-color: #f1f2f6;
+    border: 1px solid #dcdde1;
+    border-bottom: none;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+QTabBar::tab:selected {
+    background-color: white;
+    border-bottom: none;
+    margin-bottom: -1px;
+}
+
+/* 分组框样式 */
+QGroupBox {
+    margin-top: 12px;
+    font-weight: bold;
+    border: 1px solid #dcdde1;
+    border-radius: 4px;
+    padding: 12px;
+    background-color: white;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 8px;
+    padding: 0 3px;
+}
+
+/* 进度条样式 */
+QProgressBar {
+    border: 1px solid #dcdde1;
+    border-radius: 2px;
+    text-align: center;
+    background-color: #f1f2f6;
+}
+
+QProgressBar::chunk {
+    border-radius: 2px;
+}
+
+/* 按钮样式 */
+QPushButton {
+    padding: 6px 12px;
+    background-color: #4834d4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #686de0;
+}
+
+QPushButton:pressed {
+    background-color: #3c2db5;
+}
+
+QPushButton:disabled {
+    background-color: #dcdde1;
+}
+
+/* 输入框样式 */
+QLineEdit, QSpinBox {
+    padding: 4px 8px;
+    border: 1px solid #dcdde1;
+    border-radius: 4px;
+    background-color: white;
+}
+
+QLineEdit:focus, QSpinBox:focus {
+    border-color: #4834d4;
+}
+
+/* 列表部件样式 */
+QListWidget {
+    border: 1px solid #dcdde1;
+    border-radius: 4px;
+    background-color: white;
+}
+
+QListWidget::item {
+    padding: 4px 8px;
+}
+
+QListWidget::item:selected {
+    background-color: #4834d4;
+    color: white;
+}
+
+/* 文本编辑框样式 */
+QTextEdit {
+    border: 1px solid #dcdde1;
+    border-radius: 4px;
+    background-color: white;
+    padding: 4px;
+}
+
+/* 复选框样式 */
+QCheckBox {
+    spacing: 8px;
+}
+
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+}
+
+/* 单选按钮样式 */
+QRadioButton {
+    spacing: 8px;
+}
+
+QRadioButton::indicator {
+    width: 16px;
+    height: 16px;
+}

@@ -3,3 +3,6 @@ reports/*
 
 # 但保留reports目录本身
 !reports/.gitkeep
+
+# 排除配置文件
+config.json

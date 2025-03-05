@@ -1,3 +1,4 @@
+import os
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLineEdit
 from PySide6.QtCore import QThread, Signal
 from datetime import datetime
@@ -111,6 +112,11 @@ class MainWindow(QMainWindow):
         # 加载UI
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        
+        # 加载样式表
+        style_file = os.path.join(os.path.dirname(__file__), 'style.qss')
+        with open(style_file, 'r', encoding='utf-8') as f:
+            self.setStyleSheet(f.read())
         
         # 初始化配置管理器
         self.config_manager = ConfigManager()
